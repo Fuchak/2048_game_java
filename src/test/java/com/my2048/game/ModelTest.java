@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ModelTest {
 
 
+
     @Test
     void autoMove() {
         Model model = new Model();
