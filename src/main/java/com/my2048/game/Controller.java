@@ -129,12 +129,12 @@ public class Controller extends KeyAdapter implements MouseListener, MouseMotion
         if (view.isGameWon && !view.hasPlayerWonBefore) {
             view.hasPlayerWonBefore = true;
             int result = JOptionPane.showOptionDialog(view,
-                    "You've won!\nWould you like to continue, restart the game or exit?",
-                    "Victory!",
+                    "Wygrałeś!\n Chcesz kontynuować, zrestartować gre czy wyjść?",
+                    "Wygrana!",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    new Object[]{"Continue", "Restart", "Exit"},
+                    new Object[]{"Kontynuuj", "Restart", "Wyjście"},
                     null);
 
             if (result == JOptionPane.NO_OPTION) {
@@ -144,12 +144,12 @@ public class Controller extends KeyAdapter implements MouseListener, MouseMotion
             }
         } else if (view.isGameLost) {
             int result = JOptionPane.showOptionDialog(view,
-                    "You've lost :(\nWould you like to restart the game or exit?",
+                    "Przegrałeś :(\nChcesz zrestartować gre czy wyjść?",
                     "Game over",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    new Object[]{"Restart", "Exit"},
+                    new Object[]{"Restart", "Wyjście"},
                     null);
 
             if (result == JOptionPane.YES_OPTION) {

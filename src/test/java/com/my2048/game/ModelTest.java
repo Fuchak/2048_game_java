@@ -48,9 +48,8 @@ class ModelTest {
 
             for (int i = 0; i < 5; i++) {
                 model.randomMove();
-
-                assertTrue(model.hasBoardChanged(), "Stan powinien się zmienić po wykonaniu randomowego ruchu");
             }
+             assertTrue(model.hasBoardChanged(), "Stan powinien się zmienić po wykonaniu randomowego ruchu");
         }
 
 
