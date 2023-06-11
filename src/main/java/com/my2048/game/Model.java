@@ -3,8 +3,8 @@ package com.my2048.game;
 import java.util.*;
 
 public class Model {
-    public static final int FIELD_WIDTH = 4;
-    public Tile[][] gameTiles;
+    private static final int FIELD_WIDTH = 4;
+    private Tile[][] gameTiles;
     public int score = 0;
     public int maxTile = 2;
     private final Stack<Tile[][]> previousStates = new Stack<>();
@@ -228,9 +228,7 @@ public class Model {
         }
     }
 
-    public Tile[][] getGameTiles() {
-        return gameTiles;
-    }
+    public Tile[][] getGameTiles() { return gameTiles; }
 
     public void up() {
         saveState(gameTiles);

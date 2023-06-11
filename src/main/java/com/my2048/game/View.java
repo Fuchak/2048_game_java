@@ -62,7 +62,7 @@ public class View extends JPanel {
 
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
-                drawTile(g, controller.getGameTiles()[y][x], x, y ); // Zmieniono położenie na osi y
+                drawTile(g, controller.getGameTiles()[y][x], x, y );
             }
         }
 

@@ -24,9 +24,7 @@ public class Controller extends KeyAdapter implements MouseListener, MouseMotion
         view.addMouseMotionListener(this);
     }
 
-    public Tile[][] getGameTiles() {
-        return model.getGameTiles();
-    }
+    public Tile[][] getGameTiles() {return model.getGameTiles();}
 
     public int getScore() {
         return model.score;

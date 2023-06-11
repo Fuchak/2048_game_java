@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 
 
 class ControllerTest {
