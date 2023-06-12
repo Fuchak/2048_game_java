@@ -2,24 +2,61 @@ package com.my2048.game;
 
 import java.util.*;
 
+/**
+ * Klasa Model reprezentuje logikę gry 2048. Przechowuje aktualny stan gry
+ * i zawiera metody do manipulowania i badania tego stanu.
+ */
 public class Model {
+    /**
+     * Stale określająca szerokość i wysokość planszy gry. Domyślnie ustawiona na 4.
+     */
     private static final int FIELD_WIDTH = 4;
+    /**
+     * Dwuwymiarowa tablica przechowująca kafelki (płytki) gry.
+     */
     private Tile[][] gameTiles;
+    /**
+     * Przechowuje aktualny wynik gry.
+     */
     public int score = 0;
+    /**
+     * Przechowuje wartość najwyższego kafelka w grze.
+     */
     public int maxTile = 2;
+    /**
+     * Stos przechowujący poprzednie stany gry. Używane do cofania ruchów.
+     */
     private final Stack<Tile[][]> previousStates = new Stack<>();
+    /**
+     * Stos przechowujący poprzednie wyniki. Używane do cofania ruchów.
+     */
     private final Stack<Integer> previousScores = new Stack<>();
+    /**
+     * Flaga określająca, czy trzeba zapisać stan gry. Ustawiane na true po każdym ruchu.
+     */
     private boolean isSaveNeeded = true;
 
-    //dla testu
+    /**
+     * Getter dla poprzednich stanów planszy. Używany w testach
+     *
+     * @return Stack zawierający poprzednie stany planszy.
+     */
     public Stack<Tile[][]> getPreviousStates() {
         return previousStates;
     }
 
+    /**
+     * Tworzy nowy model gry, inicjalizując planszę gry.
+     */
     public Model() {
         resetGameTiles();
     }
 
+    /**
+     * Dodaje losowo nowy kafelek do planszy.
+     * Kafelek o wartości 2 jest dodawany z 90% prawdopodobieństwem,
+     * a kafelek o wartości 4 z 10% prawdopodobieństwem.
+     */
     private void addTile() {
         List<Tile> emptyTiles = getEmptyTiles();
         if (!emptyTiles.isEmpty()) {
@@ -28,6 +65,9 @@ public class Model {
         }
     }
 
+    /**
+     * Wykonuje automatyczny ruch wybierając najbardziej efektywny kierunek.
+     */
     public void autoMove() {
         PriorityQueue<MoveEfficiency> priorityQueue = new PriorityQueue<>(4, Collections.reverseOrder());
         priorityQueue.offer(getMoveEfficiency(this::left));
@@ -37,7 +77,11 @@ public class Model {
         Objects.requireNonNull(priorityQueue.poll()).getMove().move();
     }
 
-
+    /**
+     * Sprawdza, czy plansza gry uległa zmianie w porównaniu do poprzedniego stanu.
+     *
+     * @return true jeśli plansza się zmieniła, false w przeciwnym wypadku.
+     */
     public boolean hasBoardChanged() {
         Tile[][] clone = previousStates.peek();
         for (int i = 0; i < gameTiles.length; i++) {
@@ -49,7 +93,13 @@ public class Model {
         return false;
     }
 
-
+    /**
+     * Oblicza i zwraca efektywność ruchu.
+     * Efektywność jest obliczana na podstawie liczby pustych kafelków i wyniku po wykonaniu ruchu.
+     *
+     * @param move Ruch do oceny.
+     * @return Obiekt MoveEfficiency reprezentujący efektywność ruchu.
+     */
     public MoveEfficiency getMoveEfficiency(Move move) {
         move.move();
         MoveEfficiency moveEfficiency;
@@ -69,7 +119,9 @@ public class Model {
         return moveEfficiency;
     }
 
-
+    /**
+     * Wykonuje losowy ruch spośród dostępnych: w górę, w dół, w lewo, w prawo.
+     */
     public void randomMove() {
         int n = ((int) (Math.random() * 100)) % 4;
         switch (n) {
@@ -90,6 +142,12 @@ public class Model {
         }
     }
 
+    /**
+     * Zapisuje aktualny stan gry, w tym planszę gry i wynik.
+     * Po zapisie stanu, flaga isSaveNeeded jest ustawiana na false.
+     *
+     * @param tiles Dwuwymiarowa tablica reprezentująca stan planszy gry do zapisania.
+     */
     public void saveState(Tile[][] tiles) {
         Tile[][] clone = new Tile[4][4];
         for (int i = 0; i < tiles.length; i++) {
@@ -104,6 +162,9 @@ public class Model {
         isSaveNeeded = false;
     }
 
+    /**
+     * Przywraca ostatni zapisany stan gry z stosu previousStates i stosu previousScores.
+     */
     public void rollback() {
         if (!previousStates.isEmpty() && !previousScores.isEmpty()) {
             gameTiles = previousStates.pop();
@@ -111,6 +172,11 @@ public class Model {
         }
     }
 
+    /**
+     * Zwraca listę wszystkich pustych kafelków na planszy gry.
+     *
+     * @return Listę pustych kafelków.
+     */
     private List<Tile> getEmptyTiles() {
         List<Tile> emptyTiles = new ArrayList<>();
         for (int i = 0; i < FIELD_WIDTH; i++) {
@@ -121,7 +187,9 @@ public class Model {
         }
         return emptyTiles;
     }
-
+    /**
+     * Resetuje stan gry, tworząc nową, pustą planszę gry i dodając dwa kafelki.
+     */
     public void resetGameTiles() {
         this.gameTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];
         for (int i = 0; i < FIELD_WIDTH; i++) {
@@ -132,7 +200,11 @@ public class Model {
         addTile();
         addTile();
     }
-
+    /**
+     * Sprawdza, czy są dostępne jakiekolwiek dozwolone ruchy na planszy gry.
+     *
+     * @return true, jeśli jest dostępny przynajmniej jeden dozwolony ruch, w przeciwnym razie false.
+     */
     public boolean canMove() {
         if (!getEmptyTiles().isEmpty()) return true;
 
@@ -152,6 +224,12 @@ public class Model {
         return false;
     }
 
+    /**
+     * Kompresuje tablicę kafelków, przesuwając wszystkie puste kafelki na koniec.
+     *
+     * @param tiles Tablica kafelków do skompresowania.
+     * @return true jeśli tablica została zmieniona, false w przeciwnym wypadku.
+     */
     private boolean compressTiles(Tile[] tiles) {
         Tile[] clone = tiles.clone();
         for (int i = 0; i < tiles.length; i++) {
@@ -168,6 +246,12 @@ public class Model {
         return false;
     }
 
+    /**
+     * Łączy sąsiadujące kafelki o tych samych wartościach. Po połączeniu, puste kafelki są przesuwane na koniec.
+     *
+     * @param tiles Tablica kafelków do połączenia.
+     * @return true jeśli tablica została zmieniona, false w przeciwnym wypadku.
+     */
     private boolean mergeTiles(Tile[] tiles) {
         Tile[] clone = tiles.clone();
         for (int i = 1; i < tiles.length; i++) {
@@ -189,6 +273,9 @@ public class Model {
         return false;
     }
 
+    /**
+     * Przesuwa wszystkie kafelki na planszy gry w lewo. Jeśli przesunięcie powoduje zmianę na planszy, dodaje nowy kafelek.
+     */
     public void left() {
         if (isSaveNeeded) {
             saveState(gameTiles);
@@ -203,6 +290,10 @@ public class Model {
         isSaveNeeded = true;
     }
 
+    /**
+     * Przesuwa wszystkie kafelki na planszy gry w prawo. W tym celu zapisuje stan gry, obraca planszę dwa razy przeciwnie do ruchu wskazówek zegara,
+     * wykonuje ruch w lewo, a następnie obraca planszę dwa razy zgodnie z ruchem wskazówek zegara.
+     */
     public void right() {
         saveState(gameTiles);
         rotateleft();
@@ -212,6 +303,9 @@ public class Model {
         rotateleft();
     }
 
+    /**
+     * Obraca planszę gry w lewo (przeciwnie do ruchu wskazówek zegara).
+     */
     private void rotateleft() {
         // rotate
         for (int k = 0; k < FIELD_WIDTH / 2; k++) // border -> center
@@ -228,8 +322,18 @@ public class Model {
         }
     }
 
+    /**
+     * Getter dla tablicy kafelków gry.
+     *
+     * @return Dwuwymiarową tablicę zawierającą kafelki gry.
+     */
     public Tile[][] getGameTiles() { return gameTiles; }
 
+
+    /**
+     * Przesuwa wszystkie kafelki na planszy gry do góry. W tym celu zapisuje stan gry, obraca planszę w lewo,
+     * wykonuje ruch w lewo, a następnie obraca planszę trzy razy zgodnie z ruchem wskazówek zegara.
+     */
     public void up() {
         saveState(gameTiles);
         rotateleft();
@@ -239,6 +343,10 @@ public class Model {
         rotateleft();
     }
 
+    /**
+     * Przesuwa wszystkie kafelki na planszy gry w dół. W tym celu zapisuje stan gry, obraca planszę trzy razy w lewo,
+     * wykonuje ruch w lewo, a następnie obraca planszę zgodnie z ruchem wskazówek zegara.
+     */
     public void down() {
         saveState(gameTiles);
         rotateleft();

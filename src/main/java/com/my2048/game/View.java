@@ -3,17 +3,45 @@ package com.my2048.game;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa reprezentująca graficzny interfejs użytkownika gry 2048.
+ * Dziedziczy z JPanel, który umożliwia wyświetlanie i interakcję.
+ */
 public class View extends JPanel {
+    /**
+     * Nazwa czcionki używanej w grze.
+     */
     private static final String FONT_NAME = "Arial";
+    /**
+     * Rozmiar kafelka w grze.
+     */
     private static final int TILE_SIZE = 96;
+    /**
+     * Margines kafelka w grze.
+     */
     private static final int TILE_MARGIN = 12;
-
+    /**
+     * Kontroler gry, który obsługuje interakcje z użytkownikiem i logikę gry.
+     */
     private final Controller controller;
 
+    /**
+     * Zmienna śledząca, czy gracz wygrał grę.
+     */
     public boolean isGameWon = false;
+    /**
+     * Zmienna śledząca, czy gracz przegrał grę.
+     */
     public boolean isGameLost = false;
+    /**
+     * Zmienna śledząca, czy gracz wygrał grę wcześniej.
+     */
     public boolean hasPlayerWonBefore = false;
-
+    /**
+     * Konstruktor klasy View, który ustawia kontroler gry, dodaje do niego nasłuchiwaczy klawiatury i myszy.
+     *
+     * @param controller Kontroler gry.
+     */
     public View(Controller controller) {
         setFocusable(true);
         this.controller = controller;
@@ -23,7 +51,11 @@ public class View extends JPanel {
         this.addMouseMotionListener(controller);
 
     }
-
+    /**
+     * Metoda rysowania komponentów gry na panelu.
+     *
+     * @param g Obiekt graficzny do rysowania komponentów.
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -68,7 +100,14 @@ public class View extends JPanel {
 
         g2d.dispose();
     }
-
+    /**
+     * Prywatna metoda do rysowania kafelka na planszy gry.
+     *
+     * @param g2 Obiekt graficzny do rysowania komponentów.
+     * @param tile Kafelek do narysowania.
+     * @param x Pozycja x kafelka na planszy.
+     * @param y Pozycja y kafelka na planszy.
+     */
     private void drawTile(Graphics g2, Tile tile, int x, int y) {
         Graphics2D g = ((Graphics2D) g2);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -93,7 +132,12 @@ public class View extends JPanel {
         if (value != 0)
             g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
     }
-
+    /**
+     * Prywatna metoda do obliczania przesunięcia koordynat kafelka na planszy gry.
+     *
+     * @param arg Pozycja x lub y kafelka na planszy.
+     * @return Przesunięcie koordynatu kafelka.
+     */
     private static int offsetCoors(int arg) {
         return arg * (TILE_MARGIN + TILE_SIZE) + TILE_MARGIN;
     }
