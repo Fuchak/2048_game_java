@@ -35,7 +35,6 @@ public class Tile {
         if (value < 16) return new Color(0x000000);
         else return new Color(0xFFFFFF);
     }
-
     /**
      * Zwraca kolor tła kafelka na podstawie jego wartości.
      *

@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
+
 /**
  * Klasa Controller odpowiada za interakcję użytkownika z grą 2048.
  * Kontroler reaguje na zdarzenia klawiatury i myszy, kontroluje stan gry

@@ -18,7 +18,6 @@ public class MoveEfficiency implements Comparable<MoveEfficiency> {
      * Reprezentuje ruch, którego efektywność jest mierzona.
      */
     private final Move move;
-
     /**
      * Zwraca ruch, którego efektywność reprezentuje ten obiekt.
      *

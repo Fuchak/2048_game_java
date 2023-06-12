@@ -24,7 +24,6 @@ public class View extends JPanel {
      * Kontroler gry, który obsługuje interakcje z użytkownikiem i logikę gry.
      */
     private final Controller controller;
-
     /**
      * Zmienna śledząca, czy gracz wygrał grę.
      */

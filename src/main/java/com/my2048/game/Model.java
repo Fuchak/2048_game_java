@@ -245,7 +245,6 @@ public class Model {
         }
         return false;
     }
-
     /**
      * Łączy sąsiadujące kafelki o tych samych wartościach. Po połączeniu, puste kafelki są przesuwane na koniec.
      *

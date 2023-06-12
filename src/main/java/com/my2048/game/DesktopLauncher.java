@@ -7,7 +7,6 @@ import javax.swing.*;
  * Zawiera metodę main, która jest punktem wejścia do programu.
  */
 public class DesktopLauncher {
-
     /**
      * Metoda main służy do inicjalizacji gry 2048 i wyświetlenia jej na pulpicie.
      * Tworzy nowy model gry i kontroler, a następnie tworzy i konfiguruje nowe okno JFrame,
