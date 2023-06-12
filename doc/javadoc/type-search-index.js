@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"com.my2048.game","l":"Controller"},{"p":"com.my2048.game","l":"DesktopLauncher"},{"p":"com.my2048.game","l":"Model"},{"p":"com.my2048.game","l":"Move"},{"p":"com.my2048.game","l":"MoveEfficiency"},{"p":"com.my2048.game","l":"Tile"},{"p":"com.my2048.game","l":"View"}]
