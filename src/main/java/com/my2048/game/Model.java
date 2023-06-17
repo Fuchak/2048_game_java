@@ -1,5 +1,10 @@
 package com.my2048.game;
 
+import com.google.gson.Gson;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -7,22 +12,105 @@ import java.util.*;
  * i zawiera metody do manipulowania i badania tego stanu.
  */
 public class Model {
+
+
     /**
      * Stale określająca szerokość i wysokość planszy gry. Domyślnie ustawiona na 4.
      */
-    private static final int FIELD_WIDTH = 4;
+    private int FIELD_WIDTH = 4;
+
     /**
      * Dwuwymiarowa tablica przechowująca kafelki (płytki) gry.
      */
     private Tile[][] gameTiles;
+
     /**
      * Przechowuje aktualny wynik gry.
      */
-    public int score = 0;
+    private int score = 0;
+
+    /**
+     * Zmienna przechowująca najlepszy (najwyższy) wynik gry.
+     */
+    private int bestScore = 0;
+
+    /**
+     * Metoda ustawiająca tablicę płytek gry.
+     *
+     * @param gameTiles tablica płytek do ustawienia.
+     */
+    public void setGameTiles(Tile[][] gameTiles) {
+        this.gameTiles = gameTiles;
+    }
+
+    /**
+     * Metoda ustawiająca szerokość pola gry.
+     *
+     * @param FIELD szerokość pola gry do ustawienia.
+     */
+    public void setFieldWidth(int FIELD) {
+        this.FIELD_WIDTH = FIELD;
+    }
+
+    /**
+     * Metoda zwracająca szerokość pola gry.
+     *
+     * @return szerokość pola gry.
+     */
+    public int getFieldWidth() {
+        return FIELD_WIDTH;
+    }
+
+    /**
+     * Metoda zwracająca aktualny wynik gry.
+     *
+     * @return aktualny wynik gry.
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * Metoda ustawiająca aktualny wynik gry.
+     *
+     * @param score wynik, który ma zostać ustawiony.
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
+     * Metoda zwracająca najlepszy (najwyższy) wynik gry.
+     *
+     * @return najlepszy (najwyższy) wynik gry.
+     */
+    public int getBestScore() {
+        return bestScore;
+    }
+
+    /**
+     * Metoda ustawiająca najlepszy (najwyższy) wynik gry.
+     *
+     * @param score wynik, który ma zostać ustawiony jako najlepszy.
+     */
+    public void setBestScore(int score) {
+        this.bestScore = score;
+    }
+
     /**
      * Przechowuje wartość najwyższego kafelka w grze.
      */
     public int maxTile = 2;
+
+    /**
+     * Metoda służąca do czyszczenia historii stanów i wyników gry.
+     * Jest używana przy resetowaniu gry, aby zapobiec możliwości cofania ruchów
+     * do stanu gry sprzed resetu.
+     */
+    public void clearHistory() {
+        previousStates.clear();
+        previousScores.clear();
+    }
     /**
      * Stos przechowujący poprzednie stany gry. Używane do cofania ruchów.
      */
@@ -31,6 +119,7 @@ public class Model {
      * Stos przechowujący poprzednie wyniki. Używane do cofania ruchów.
      */
     private final Stack<Integer> previousScores = new Stack<>();
+
     /**
      * Flaga określająca, czy trzeba zapisać stan gry. Ustawiane na true po każdym ruchu.
      */
@@ -64,7 +153,6 @@ public class Model {
             emptyTiles.get(randomTileIndex).value = (Math.random() < 0.9) ? 2 : 4;
         }
     }
-
     /**
      * Wykonuje automatyczny ruch wybierając najbardziej efektywny kierunek.
      */
@@ -74,7 +162,12 @@ public class Model {
         priorityQueue.offer(getMoveEfficiency(this::right));
         priorityQueue.offer(getMoveEfficiency(this::up));
         priorityQueue.offer(getMoveEfficiency(this::down));
-        Objects.requireNonNull(priorityQueue.poll()).getMove().move();
+        if (!priorityQueue.isEmpty()) {
+            Objects.requireNonNull(priorityQueue.poll()).getMove().move();
+        } else {
+            // tutaj można rzucić wyjątek lub obsłużyć sytuację inaczej
+            throw new RuntimeException("No available moves to make.");
+        }
     }
 
     /**
@@ -83,15 +176,18 @@ public class Model {
      * @return true jeśli plansza się zmieniła, false w przeciwnym wypadku.
      */
     public boolean hasBoardChanged() {
-        Tile[][] clone = previousStates.peek();
-        for (int i = 0; i < gameTiles.length; i++) {
-            for (int j = 0; j < gameTiles.length; j++) {
-                if (gameTiles[i][j].value != clone[i][j].value)
-                    return true;
+        if (!previousStates.isEmpty()) {
+            Tile[][] clone = previousStates.peek();
+            for (int i = 0; i < gameTiles.length; i++) {
+                for (int j = 0; j < gameTiles.length; j++) {
+                    if (gameTiles[i][j].value != clone[i][j].value)
+                        return true;
+                }
             }
         }
         return false;
     }
+
 
     /**
      * Oblicza i zwraca efektywność ruchu.
@@ -119,28 +215,6 @@ public class Model {
         return moveEfficiency;
     }
 
-    /**
-     * Wykonuje losowy ruch spośród dostępnych: w górę, w dół, w lewo, w prawo.
-     */
-    public void randomMove() {
-        int n = ((int) (Math.random() * 100)) % 4;
-        switch (n) {
-            case 0:
-                up();
-                break;
-            case 1:
-                right();
-                break;
-            case 2:
-                down();
-                break;
-            case 3:
-                left();
-                break;
-            default:
-                break;
-        }
-    }
 
     /**
      * Zapisuje aktualny stan gry, w tym planszę gry i wynik.
@@ -149,7 +223,7 @@ public class Model {
      * @param tiles Dwuwymiarowa tablica reprezentująca stan planszy gry do zapisania.
      */
     public void saveState(Tile[][] tiles) {
-        Tile[][] clone = new Tile[4][4];
+        Tile[][] clone = new Tile[FIELD_WIDTH][FIELD_WIDTH];
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
                 Tile a = new Tile();
@@ -169,8 +243,9 @@ public class Model {
         if (!previousStates.isEmpty() && !previousScores.isEmpty()) {
             gameTiles = previousStates.pop();
             score = previousScores.pop();
+            }
         }
-    }
+
 
     /**
      * Zwraca listę wszystkich pustych kafelków na planszy gry.
@@ -245,8 +320,9 @@ public class Model {
         }
         return false;
     }
+
     /**
-     * Łączy sąsiadujące kafelki o tych samych wartościach. Po połączeniu, puste kafelki są przesuwane na koniec.
+     * łączy sąsiadujące kafelki o tych samych wartościach. Po połączeniu, puste kafelki są przesuwane na koniec.
      *
      * @param tiles Tablica kafelków do połączenia.
      * @return true jeśli tablica została zmieniona, false w przeciwnym wypadku.
@@ -261,6 +337,7 @@ public class Model {
                     maxTile = tiles[i - 1].value;
                 }
                 score += tiles[i - 1].value;
+                if(score>bestScore){bestScore=score;}
                 tiles[i] = new Tile();
 
                 compressTiles(tiles);
@@ -353,6 +430,42 @@ public class Model {
         rotateleft();
         left();
         rotateleft();
+    }
+
+    /**
+     * Metoda zapisuje aktualny stan gry do pliku .json.
+     * Stan gry obejmuje aktualny wynik, najlepszy wynik oraz stan planszy gry.
+     */
+    public void saveGame() {
+        String fileName = "gameState" + FIELD_WIDTH +  ".json";
+        Model gameState = new Model();
+        gameState.setGameTiles(getGameTiles());
+        gameState.setBestScore(getBestScore());
+        gameState.setScore(getScore());
+        try (FileWriter fileWriter = new FileWriter(fileName)) {
+            Gson gson = new Gson();
+            gson.toJson(gameState, fileWriter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metoda wczytuje stan gry z pliku .json.
+     * Stan gry obejmuje aktualny wynik, najlepszy wynik oraz stan planszy gry.
+     * Po wczytaniu, metoda uaktualnia model gry zgodnie z wczytanym stanem.
+     */
+    public void loadGame() {
+        String fileName = "gameState" + FIELD_WIDTH +  ".json";
+        try (FileReader fileReader = new FileReader(fileName)) {
+            Gson gson = new Gson();
+            Model gameState = gson.fromJson(fileReader, Model.class);
+            setGameTiles(gameState.getGameTiles());
+            setBestScore(gameState.getBestScore());
+            setScore(gameState.getScore());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

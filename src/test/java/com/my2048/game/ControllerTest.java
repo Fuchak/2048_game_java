@@ -9,12 +9,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class ControllerTest {
+    @Test
+    void getScore() {
+        Controller controller = new Controller(new Model());
+        controller.setModelScore(5);
+        assertEquals(5, controller.getScore(), "Niepoprawna liczba punktów zwrócona przez getter");
+    }
+    @Test
+    void getBestScore() {
+        Controller controller = new Controller(new Model());
+        assertEquals(0, controller.getbestScore(), "Niepoprawna liczba punktów zwrócona przez getter dla najlepszego wyniku");
+    }
+
+    @Test
+    void setModelScore() {
+        Controller controller = new Controller(new Model());
+        controller.setModelScore(7);
+        assertEquals(7, controller.getScore(), "Niepoprawna liczba punktów po użyciu settera");
+    }
 
     @Test
     void keyPressed() throws InterruptedException {
-        Controller controller = new Controller(new Model());
-        KeyEvent keyEvent = new KeyEvent(new JPanel(), 0, 0, 0, KeyEvent.VK_ESCAPE, ' ');
 
+        Controller controller = new Controller(new Model());
+        KeyEvent keyEvent = new KeyEvent(new JPanel(), 0, 0, 0, KeyEvent.VK_R, ' ');
 
         controller.setModelScore(100);
         controller.keyPressed(keyEvent);
@@ -33,6 +51,7 @@ class ControllerTest {
         controller.setModelScore(5000);
         controller.getView().isGameWon = true;
 
+        Thread.sleep(100);
         // Reset gry
         controller.resetGame();
 

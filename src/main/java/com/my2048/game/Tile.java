@@ -10,6 +10,7 @@ public class Tile {
      * Wartość liczbową przechowywaną przez kafelek.
      */
     public int value;
+
     /**
      * Konstruktor tworzący pusty kafelek (wartość równa zero).
      */

@@ -8,6 +8,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class ModelTest {
 
 
+    @Test
+    void testGetAndSetScore() {
+        Model model = new Model();
+        model.setScore(500);
+        assertEquals(500, model.getScore());
+    }
+
+    @Test
+    void testGetAndSetBestScore() {
+        Model model = new Model();
+        model.setBestScore(1000);
+        assertEquals(1000, model.getBestScore());
+    }
 
     @Test
     void autoMove() {
@@ -43,17 +56,6 @@ class ModelTest {
 
 
     @Test
-    void randomMove(){
-            Model model = new Model();
-
-            for (int i = 0; i < 5; i++) {
-                model.randomMove();
-            }
-             assertTrue(model.hasBoardChanged(), "Stan powinien się zmienić po wykonaniu randomowego ruchu");
-        }
-
-
-    @Test
     void saveState() {
         Model model = new Model();
         Controller controller = new Controller(new Model());
@@ -62,9 +64,10 @@ class ModelTest {
         model.left();
 
         // Tworzymy kopię stanu gry.
-        Tile[][] originalState = new Tile[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        Tile[][] originalState = new Tile[model.getFieldWidth()][model.getFieldWidth()];
+
+        for (int i = 0; i < model.getFieldWidth(); i++) {
+            for (int j = 0; j < model.getFieldWidth(); j++) {
                 if (controller.getGameTiles()[i][j] != null) {
                     Tile copyTile = new Tile();
                     copyTile.value = controller.getGameTiles()[i][j].value;
@@ -82,8 +85,8 @@ class ModelTest {
 
         // Sprawdzamy, czy poprzedni stan został poprawnie zapisany.
         Tile[][] savedState = model.getPreviousStates().peek();
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < model.getFieldWidth(); i++) {
+            for (int j = 0; j < model.getFieldWidth(); j++) {
                 if (originalState[i][j] != null) {
                     assertEquals(originalState[i][j].value, savedState[i][j].value);
                 } else {
@@ -98,17 +101,17 @@ class ModelTest {
         Model model = new Model();
 
         // Wykonajmy ruch
-        model.randomMove();
+        model.up();
 
-        int expectedScore = model.score;
+        int expectedScore = model.getScore();
 
         // Wykonajmy dodatkowy ruch, który zmieni stan gry
-        model.randomMove();
+        model.up();
 
         // Przywróćmy poprzedni stan gry
         model.rollback();
 
-        assertEquals(expectedScore, model.score, "Wynik powinien zostać przywrócony do poprzedniego stanu");
+        assertEquals(expectedScore, model.getScore(), "Wynik powinien zostać przywrócony do poprzedniego stanu");
     }
 
 
@@ -118,10 +121,10 @@ class ModelTest {
         model.resetGameTiles();
         Tile[][] gameTiles = model.getGameTiles();
 
-        // Po restarcie gry, powinniśmy mieć 16 pustych kafelków
+        // Po restarcie gry, powinniśmy mieć 7 pustych kafelków bo mamy statycznie field_width=3
         int emptyTiles = 0;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < model.getFieldWidth(); i++) {
+            for (int j = 0; j < model.getFieldWidth(); j++) {
                 if (gameTiles[i][j].isEmpty()) {
                     emptyTiles++;
                 }
@@ -226,4 +229,29 @@ class ModelTest {
             }
         }
     }
+
+    @Test
+    void saveAndLoadGameTest() {
+        Model model = new Model();
+        model.setScore(5000);
+        model.setBestScore(6000);
+        // ustawiamy wartości na planszy gry
+        // (właściwe wartości zależą od twojego konkretnego rozwiązania)
+        model.getGameTiles()[0][0].value = 2;
+
+        model.saveGame();
+
+        // teraz resetujemy model
+        model.setScore(0);
+        model.setBestScore(0);
+        model.getGameTiles()[0][0].value = 0;
+
+        // teraz wczytujemy stan gry
+        model.loadGame();
+
+        assertEquals(5000, model.getScore());
+        assertEquals(6000, model.getBestScore());
+        assertEquals(2, model.getGameTiles()[0][0].value);
+    }
+
 }

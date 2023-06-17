@@ -8,14 +8,59 @@ import java.awt.*;
  * Dziedziczy z JPanel, który umożliwia wyświetlanie i interakcję.
  */
 public class View extends JPanel {
+
     /**
-     * Nazwa czcionki używanej w grze.
+     * Enum reprezentujący stany gry.
      */
-    private static final String FONT_NAME = "Arial";
+    public enum GameState {
+        MENU,
+        PLAYING,
+        WON,
+        LOST
+    }
+    /**
+     * Bieżący stan gry, domyślnie ustawiony na MENU.
+     */
+    public GameState currentState = GameState.MENU;
+
     /**
      * Rozmiar kafelka w grze.
      */
-    private static final int TILE_SIZE = 96;
+    private int TILE_SIZE = 96;
+
+    /**
+     * Rozmiar planszy gry, domyślnie ustawiony na 3.
+     */
+    private int size=3;
+    /**
+     * Zwraca rozmiar planszy gry.
+     * Rozmiar planszy to liczba kafelków w jednym rzędzie (lub kolumnie, ponieważ plansza jest kwadratem).
+     *
+     * @return rozmiar planszy gry.
+     */
+    public int getBoardSize() {
+        return size;
+    }
+    /**
+     * Zwraca rozmiar kafelka na planszy gry.
+     * Jest to długość (lub szerokość) kafelka, ponieważ kafelek jest kwadratem.
+     *
+     * @return rozmiar kafelka na planszy gry.
+     */
+    public int getTileSize() {
+        return TILE_SIZE;
+    }
+
+
+    /**
+     * Ustawia rozmiar planszy gry.
+     *
+     * @param size nowy rozmiar planszy gry
+     */
+    public void setBoardSize(int size) {
+        this.size = size;
+    }
+
     /**
      * Margines kafelka w grze.
      */
@@ -37,6 +82,46 @@ public class View extends JPanel {
      */
     public boolean hasPlayerWonBefore = false;
     /**
+     * Nazwa czcionki używanej w grze.
+     */
+    private static final String FONT_NAME = "Arial";
+
+    /**
+     * Ustawia rozmiar kafelka (komórki) na planszy gry.
+     *
+     * @param tileSize nowy rozmiar kafelka
+     */
+    public void setTileSize(int tileSize) {
+        this.TILE_SIZE = tileSize;
+    }
+
+    /**
+     * Zwraca prostokąt reprezentujący obszar przycisku 3x3 na interfejsie użytkownika.
+     *
+     * @return prostokąt reprezentujący obszar przycisku 3x3
+     */
+    public Rectangle get3x3ButtonArea() {
+        return new Rectangle(50, 200, 110, 60);  // współrzędne i wymiary przycisku 3x3
+    }
+    /**
+     * Zwraca prostokąt reprezentujący obszar przycisku 4x4 na interfejsie użytkownika.
+     *
+     * @return prostokąt reprezentujący obszar przycisku 4x4
+     */
+    public Rectangle get4x4ButtonArea() {
+        return new Rectangle(170, 200, 110, 60);  // współrzędne i wymiary przycisku 4x4
+    }
+    /**
+     * Zwraca prostokąt reprezentujący obszar przycisku 5x5 na interfejsie użytkownika.
+     *
+     * @return prostokąt reprezentujący obszar przycisku 5x5
+     */
+    public Rectangle get5x5ButtonArea() {
+        return new Rectangle(290, 200, 110, 60);  // współrzędne i wymiary przycisku 5x5
+    }
+
+
+    /**
      * Konstruktor klasy View, który ustawia kontroler gry, dodaje do niego nasłuchiwaczy klawiatury i myszy.
      *
      * @param controller Kontroler gry.
@@ -48,7 +133,6 @@ public class View extends JPanel {
 
         this.addMouseListener(controller);
         this.addMouseMotionListener(controller);
-
     }
     /**
      * Metoda rysowania komponentów gry na panelu.
@@ -59,6 +143,7 @@ public class View extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int width = this.getSize().width;
         int height = this.getSize().height;
 
@@ -70,35 +155,144 @@ public class View extends JPanel {
         g2d.setPaint(gradient);
         g2d.fillRect(0, 0, width, height);
 
+        switch (currentState) {
+            case MENU:
+                drawMenu(g);
+                break;
+            case PLAYING:
+                drawGame(g);
+                break;
+            case WON:
+                drawGame(g);
+                drawGameWon(g);
+                break;
+            case LOST:
+                drawGame(g);
+                drawGameOver(g);
+                break;
+        }
+
+        g2d.dispose();
+    }
+
+    /**
+     * Metoda drawGame służy do rysowania planszy gry. Wyświetla planszę z kafelkami,
+     * a także informacje o grze, takie jak aktualny wynik i najlepszy wynik.
+     * @param g Obiekt Graphics, który dostarcza kontekst graficzny.
+     */
+    private void drawGame(Graphics g) {
+        // rysujemy grę
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(new Color(0xFFFFFF));
         g.setFont(new Font(FONT_NAME, Font.BOLD, 50));
         g.drawString("2048", 10, 50);
 
         g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
-        g2d.fillRoundRect(280, 15, 110, 60, 10, 10);
+        g2d.fillRoundRect(15, 70, 50, 20, 10, 10);
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 12));
+        g.setColor(new Color(0xFFFFFF));
+        g.drawString("MENU", 25, 85);
+
+        g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
+        g2d.fillRoundRect(160, 15, 110, 60, 10, 10);
         g.setFont(new Font(FONT_NAME, Font.BOLD, 24));
-        g.drawString("Wynik ", 300, 40);
-        g.drawString(String.valueOf(controller.getScore()), 300, 65);
+        g.drawString("Wynik ", 180, 40);
+        g.drawString(String.valueOf(controller.getScore()), 180, 65);
+
+        g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
+        g2d.fillRoundRect(280, 15, 150, 60, 10, 10);
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 24));
+        g.drawString("Najlepszy ", 300, 40);
+        g.drawString(String.valueOf(controller.getbestScore()), 300, 65);
+
 
         g.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
-        g.drawString("Cofnij ruch - Z,",30, 90);
-        g.drawString("Randomowy ruch - R,", 130, 90);
+        g.drawString("Cofnij ruch - Z,",100, 90);
+        g.drawString("Reset - R,", 200, 90);
         g.drawString("Automatyczny ruch - A", 270, 90);
-        g.drawString("Reset - ESC", 150, 75);
+        //g.drawString("Reset - ESC", 150, 75);
 
         g2d.fillRoundRect(3, 100,
-                (TILE_SIZE + TILE_MARGIN+2) * 4,
-                (TILE_SIZE + TILE_MARGIN+2) * 4,
+                (96 + TILE_MARGIN+2) * 4,
+                (96 + TILE_MARGIN+2) * 4,
                 10, 10);
 
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
                 drawTile(g, controller.getGameTiles()[y][x], x, y );
             }
         }
-
-        g2d.dispose();
     }
+    /**
+     * Metoda drawMenu służy do rysowania menu głównego gry. Wyświetla opcje wyboru
+     * rozmiaru planszy (3x3, 4x4, 5x5).
+     * @param g Obiekt Graphics, który dostarcza kontekst graficzny.
+     */
+    private void drawMenu(Graphics g) {
+        // rysujemy menu główne
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 70));
+        g.drawString("2048", 140, 100);
+
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 20));
+        g.drawString("Wybierz rozmiar planszy", 100, 170);
+
+        g.setFont(new Font(FONT_NAME, Font.PLAIN, 30));
+        g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
+        g2d.fillRoundRect(50, 200, 110, 60, 10, 10);
+        g.drawString("3x3", 75, 240);
+
+        g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
+        g2d.fillRoundRect(170, 200, 110, 60, 10, 10);
+        g.drawString("4x4", 195, 240);
+
+        g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
+        g2d.fillRoundRect(290, 200, 110, 60, 10, 10);
+        g.drawString("5x5", 315, 240);
+    }
+    /**
+     * Metoda drawGameWon służy do rysowania ekranu po wygranej grze. Wyświetla komunikat
+     * o wygranej oraz informację o możliwości kontynuowania gry.
+     * @param g Obiekt Graphics, który dostarcza kontekst graficzny.
+     */
+    private void drawGameWon(Graphics g) {
+        // Przyciemniamy planszę gry
+        g.setColor(new Color(0, 0, 0, 127));
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // Wyświetlamy napis "Wygrałeś" na środku planszy
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 48));
+        g.drawString("Wygrałeś", getWidth() / 4, getHeight() / 2);
+
+        // Wyświetlamy napis "Stuknij, aby kontynuować" poniżej
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 24));
+        g.drawString("Stuknij, aby kontynuować", 80, (getHeight() / 2) + 40);
+    }
+    /**
+     * Metoda drawGameOver służy do rysowania ekranu po przegranej grze. Wyświetla komunikat
+     * o przegranej oraz informacje o możliwości cofnięcia ruchu i resetu gry.
+     * @param g Obiekt Graphics, który dostarcza kontekst graficzny.
+     */
+    private void drawGameOver(Graphics g) {
+        // Przyciemniamy planszę gry
+        g.setColor(new Color(0, 0, 0, 127));
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // Wyświetlamy napis "Koniec Gry!" na środku planszy
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 48));
+        g.drawString("Koniec Gry!", getWidth() / 4, getHeight() / 2);
+
+        // Wyświetlamy informacje o możliwości cofnięcia ruchu, resetu gry lub powrotu do menu
+        g.setFont(new Font(FONT_NAME, Font.BOLD, 24));
+        g.drawString("Cofnij ruch - Z, Reset - R", 90, (getHeight() / 2) + 40);
+    }
+
+
     /**
      * Prywatna metoda do rysowania kafelka na planszy gry.
      *
@@ -137,8 +331,11 @@ public class View extends JPanel {
      * @param arg Pozycja x lub y kafelka na planszy.
      * @return Przesunięcie koordynatu kafelka.
      */
-    private static int offsetCoors(int arg) {
+    private int offsetCoors(int arg) {
         return arg * (TILE_MARGIN + TILE_SIZE) + TILE_MARGIN;
     }
+
+
+
 }
 
