@@ -124,6 +124,7 @@ public class Controller extends KeyAdapter implements MouseListener, MouseMotion
             if (e.getKeyCode() == KeyEvent.VK_Z) model.rollback();
             if (e.getKeyCode() == KeyEvent.VK_R) resetGame();
             if (e.getKeyCode() == KeyEvent.VK_A) model.autoMove();
+            if (e.getKeyCode() == KeyEvent.VK_M) view.currentState = View.GameState.MENU;
         }
         else if(view.currentState == View.GameState.LOST){
             if (e.getKeyCode() == KeyEvent.VK_Z) {
