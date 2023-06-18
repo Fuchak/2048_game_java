@@ -1,7 +1,7 @@
 ## Start
 Poruszanie się:
 
-Myszką wybieramy rozmiar planszy , cofamy się do menu oraz możemy się nią poruszać
+Myszką wybieramy rozmiar planszy, cofamy się do menu oraz możemy się nią poruszać
 
 ESC - wyjście z gry
 
@@ -9,7 +9,9 @@ R - Reset planszy
 
 Z - Cofnięcie ruchu
 
-A- Automatyczny ruch
+A - Automatyczny ruch
+
+M - Cofnięcie do menu
 
 Strzałkami - Poruszanie się
 
