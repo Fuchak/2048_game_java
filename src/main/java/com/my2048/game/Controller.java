@@ -199,6 +199,7 @@ public class Controller extends KeyAdapter implements MouseListener, MouseMotion
             }
             if (model.maxTile == WINNING_TILE) view.isGameWon = true;
             view.repaint();
+            model.saveGame();
             checkGameStatus();
         }
     }
@@ -244,6 +245,28 @@ public class Controller extends KeyAdapter implements MouseListener, MouseMotion
                 view.repaint();
                 view.currentState = View.GameState.MENU;
             }
+            // Sprawdź, czy kliknięcie było w obrębie przycisku "Z"
+            else if (new Rectangle(181, 75, 15, 20).contains(p)) {
+                // Wywołaj funkcję cofania ruchu
+                model.rollback();
+                model.saveGame();
+                view.repaint();
+            }
+            // Sprawdź, czy kliknięcie było w obrębie przycisku "R"
+            else if (new Rectangle(252, 75, 15, 20).contains(p)) {
+                // Wywołaj funkcję resetu gry
+                resetGame();
+                model.saveGame();
+                view.repaint();
+            }
+            // Sprawdź, czy kliknięcie było w obrębie przycisku "A"
+            else if (new Rectangle(401, 75, 15, 20).contains(p)) {
+                // Wywołaj funkcję automatycznego ruchu
+                model.autoMove();
+                model.saveGame();
+                view.repaint();
+            }
+
         }
         else if (view.currentState == View.GameState.WON && new Rectangle(0, 0, 460, 580).contains(p)) {
             view.repaint();

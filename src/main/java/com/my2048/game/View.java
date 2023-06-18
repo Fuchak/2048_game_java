@@ -192,26 +192,40 @@ public class View extends JPanel {
         g2d.fillRoundRect(15, 70, 50, 20, 10, 10);
         g.setFont(new Font(FONT_NAME, Font.BOLD, 12));
         g.setColor(new Color(0xFFFFFF));
-        g.drawString("MENU", 25, 85);
+        g.drawString("MENU", 23, 85);
 
         g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
-        g2d.fillRoundRect(160, 15, 110, 60, 10, 10);
+        g2d.fillRoundRect(160, 10, 110, 60, 10, 10);
         g.setFont(new Font(FONT_NAME, Font.BOLD, 24));
-        g.drawString("Wynik ", 180, 40);
-        g.drawString(String.valueOf(controller.getScore()), 180, 65);
+        g.drawString("Wynik ", 180, 35);
+        g.drawString(String.valueOf(controller.getScore()), 180, 60);
 
         g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
-        g2d.fillRoundRect(280, 15, 150, 60, 10, 10);
+        g2d.fillRoundRect(280, 10, 150, 60, 10, 10);
         g.setFont(new Font(FONT_NAME, Font.BOLD, 24));
-        g.drawString("Najlepszy ", 300, 40);
-        g.drawString(String.valueOf(controller.getbestScore()), 300, 65);
+        g.drawString("Najlepszy ", 300, 35);
+        g.drawString(String.valueOf(controller.getbestScore()), 300, 60);
 
 
         g.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
-        g.drawString("Cofnij ruch - Z,",100, 90);
-        g.drawString("Reset - R,", 200, 90);
-        g.drawString("Automatyczny ruch - A", 270, 90);
-        //g.drawString("Reset - ESC", 150, 75);
+        // Cofnij ruch
+        g.setColor(Color.BLACK);
+        g.drawString("Cofnij ruch - ",100, 90);
+        g2d.fillRoundRect(181, 75, 15, 20, 10, 10);
+        g.setColor(Color.WHITE);
+        g.drawString("Z", 185, 90);
+        // Reset gry
+        g.setColor(Color.BLACK);
+        g.drawString("Reset - ", 200, 90);
+        g2d.fillRoundRect(252, 75, 15, 20, 10, 10);
+        g.setColor(Color.WHITE);
+        g.drawString("R", 255, 90);
+        // Automatyczny ruch
+        g.setColor(Color.BLACK);
+        g.drawString("Automatyczny ruch - ", 270, 90);
+        g2d.fillRoundRect(401, 75, 15, 20, 10, 10);
+        g.setColor(Color.WHITE);
+        g.drawString("A", 405, 90);
 
         g2d.fillRoundRect(3, 100,
                 (96 + TILE_MARGIN+2) * 4,
@@ -243,15 +257,15 @@ public class View extends JPanel {
         g.setFont(new Font(FONT_NAME, Font.PLAIN, 30));
         g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
         g2d.fillRoundRect(50, 200, 110, 60, 10, 10);
-        g.drawString("3x3", 75, 240);
+        g.drawString("3x3", 80, 240);
 
         g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
         g2d.fillRoundRect(170, 200, 110, 60, 10, 10);
-        g.drawString("4x4", 195, 240);
+        g.drawString("4x4", 200, 240);
 
         g2d.setColor(new Color(0xcd, 0xc1, 0xb4, 128));
         g2d.fillRoundRect(290, 200, 110, 60, 10, 10);
-        g.drawString("5x5", 315, 240);
+        g.drawString("5x5", 320, 240);
     }
     /**
      * Metoda drawGameWon służy do rysowania ekranu po wygranej grze. Wyświetla komunikat
