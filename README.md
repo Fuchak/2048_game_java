@@ -27,5 +27,6 @@ Folder target otwórz cmd/shell
 
 ```java -jar 2048-1.0.jar``` 
 
-![image](https://github.com/user-attachments/assets/f4f5ad0e-27a8-4356-9cf8-4a6aeb674900)
-
+<h2>Screenshots</h2>
+<img src="https://github.com/user-attachments/assets/f4f5ad0e-27a8-4356-9cf8-4a6aeb674900" width="200" alt="Choose Create User Method">
+<img src="https://github.com/user-attachments/assets/4887f5cc-bd7c-4bfc-952a-2474bb2d8468" width="200" alt="Choose Create User Method">
