@@ -27,4 +27,5 @@ Folder target otwórz cmd/shell
 
 ```java -jar 2048-1.0.jar``` 
 
+![image](https://github.com/user-attachments/assets/f4f5ad0e-27a8-4356-9cf8-4a6aeb674900)
 
